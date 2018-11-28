@@ -1,0 +1,1 @@
+# synadia-cli
