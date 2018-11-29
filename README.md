@@ -9,7 +9,7 @@ A tool for creating an NGS account and create NATS configurations that are hoste
 With Python:
 
 ```python
-curl -L https://raw.githubusercontent.com/connecteverything/ngs-cli/master/install.py | python
+curl -L https://downloads.synadia.com/ngs/install.py | python
 ```
 
 Direct Download:
