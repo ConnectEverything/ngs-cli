@@ -111,7 +111,10 @@ def main():
     os.chmod(exe_fn, 0o744)
 
     print("NGS: " + exe_fn)
+    print()
+    print()
     print("Now manually add %s to your $PATH" % bin_dir)
+    print()
     print("Bash Example:")
     print("  echo 'export PATH=\"$PATH:%s\"' >> $HOME/.bash_profile" % bin_dir)
     print("  source $HOME/.bash_profile")
