@@ -22,6 +22,7 @@ import io
 import os
 import re
 import sys
+import time
 import zipfile
 import zlib
 
@@ -110,7 +111,16 @@ def main():
             exe.write(content)
     os.chmod(exe_fn, 0o744)
 
-    print("NGS: " + exe_fn)
+    now = int(time.time())
+    json = "{\"last_update\":" + str(now) +"}"
+    home = os.path.expanduser("~")
+    toolhome = os.path.join(home, ".ngs")
+    json_fn = os.path.join(toolhome, "ngs.json")
+    with open(json_fn, "w") as text_file:
+        text_file.write(json)
+
+    print()
+    print("NGS installed at: " + exe_fn)
     print()
     print()
     print("Now manually add %s to your $PATH" % bin_dir)
@@ -132,7 +142,7 @@ def mkdir(d):
 
 def ngs_bin_dir():
     home = os.path.expanduser("~")
-    toolhome = os.path.join(home, ".ngscli")
+    toolhome = os.path.join(home, ".ngs")
     mkdir(toolhome)
     bin_dir = os.path.join(toolhome, "bin")
     mkdir(bin_dir)
