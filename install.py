@@ -111,14 +111,6 @@ def main():
             exe.write(content)
     os.chmod(exe_fn, 0o744)
 
-    now = int(time.time())
-    json = "{\"last_update\":" + str(now) +"}"
-    home = os.path.expanduser("~")
-    toolhome = os.path.join(home, ".ngs")
-    json_fn = os.path.join(toolhome, "ngs.json")
-    with open(json_fn, "w") as text_file:
-        text_file.write(json)
-
     print()
     print("NGS installed at: " + exe_fn)
     print()
