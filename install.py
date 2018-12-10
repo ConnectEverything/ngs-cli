@@ -126,7 +126,7 @@ def main():
     print()
     print("You will need to extend your $PATH. Place the ")
     print("contents of "+ env_tool + " in your shell setup of choice.")
-    print("e.g. 'cat " + env_tool + ">> " + os.path.join('$HOME', '.bashrc'))
+    print("e.g. 'cat " + env_tool + " >> " + os.path.join('$HOME', '.bashrc') + "'")
     print()
     print("To get started, try 'source " + env_tool + "'")
     print("If successful, 'ngs -h' will show the help options.")
@@ -144,11 +144,10 @@ def ngs_add_env():
     ngs_home = os.path.join(home, ".ngs")
     env = os.path.join(ngs_home, "env")
     bin_dir = os.path.join('$HOME', '.ngs','bin')
-    env_cmd = 'export PATH=' + bin_dir + ':$PATH'
+    env_cmd = 'export PATH=' + bin_dir + ':$PATH  #Add NGS utility to the path'
     with open(env, 'w+') as env_file:
         env_file.write(env_cmd + '\n')
     os.chmod(env, 0o744)
-    os.environ['PATH'] = bin_dir + ':$PATH'
 
 def ngs_bin_dir():
     home = os.path.expanduser("~")
