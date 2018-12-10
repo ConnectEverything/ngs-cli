@@ -137,7 +137,6 @@ def main():
 
 def mkdir(d):
     if not os.path.exists(d):
-        print("mkdir", d)
         os.mkdir(d)
 
 def ngs_add_env():
