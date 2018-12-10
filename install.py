@@ -37,6 +37,7 @@ TAG_URL = REPO_URL + "/releases/tag/"
 FILENAME_LOOKUP = {
     "darwin": "ngs-darwin-amd64.zip",
     "linux": "ngs-linux-amd64.zip",
+    "linux2": "ngs-linux-amd64.zip",
     "win32": "ngs-windows-amd64.zip"
 }
 
