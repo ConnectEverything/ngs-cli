@@ -1,7 +1,7 @@
 # NGS
 
 
-A tool for creating an NGS account and create NATS configurations that are hosted in the cloud by Synadia.
+A tool for creating an NGS account and users for accessing the NGS global system operated by Synadia.
 
 
 ## Install
@@ -9,7 +9,7 @@ A tool for creating an NGS account and create NATS configurations that are hoste
 With Python:
 
 ```python
-curl -L https://downloads.synadia.com/ngs/install.py | python
+curl https://downloads.synadia.com/ngs/install.py -sSf | python
 ```
 
 Direct Download:
@@ -18,4 +18,4 @@ Download your platform binary from [here.](https://github.com/connecteverything/
 
 ## Updates are easy
 
-`nsc update` will download and install the latest version.
+`ngs update` will download and install the latest version.

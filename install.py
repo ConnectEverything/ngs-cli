@@ -67,7 +67,7 @@ def release_url(platform, tag):
 
 
 def download_with_progress(url):
-    print("Downloading", url)
+    print("Downloading NGS installer: ", url)
 
     remote_file = urlopen(url)
     total_size = int(remote_file.headers['Content-Length'].strip())
@@ -94,6 +94,9 @@ def main():
     bin_dir = ngs_bin_dir()
     exe_fn = os.path.join(bin_dir, "ngs")
 
+    print()
+    print("Installing NGS tools for platform: " + sys.platform)
+
     url = release_url(sys.platform, sys.argv[1] if len(sys.argv) > 1 else None)
     compressed = download_with_progress(url)
 
@@ -111,19 +114,24 @@ def main():
             exe.write(content)
     os.chmod(exe_fn, 0o744)
 
+    # Add the env helper.
+    ngs_add_env()
+
+    p_exe_dir = os.path.join('$HOME','.ngs','bin','ngs')
+    env_tool = os.path.join('$HOME', '.ngs', 'env')
+
     print()
-    print("NGS installed at: " + exe_fn)
+    print("The NGS tool has been installed: " + p_exe_dir)
     print()
+    print("You will need to extend your $PATH. Place the ")
+    print("contents of "+ env_tool + " in your shell setup of choice.")
+    print("e.g. 'cat " + env_tool + ">> " + os.path.join('$HOME', '.bashrc'))
     print()
-    print("Now manually add %s to your $PATH" % bin_dir)
+    print("To get started, try 'source " + env_tool + "'")
+    print("If successful, 'ngs -h' will show the help options.")
     print()
-    print("Bash Example:")
-    print("  echo 'export PATH=\"$PATH:%s\"' >> $HOME/.bash_profile" % bin_dir)
-    print("  source $HOME/.bash_profile")
-    print()
-    print("Zsh Example:")
-    print("  echo 'export PATH=\"$PATH:%s\"' >> $HOME/.zshrc" % bin_dir)
-    print("  source $HOME/.zshrc")
+    print("Signup for a  free account using 'ngs signup --free'.")
+    print("When complete, use 'ngs demo echo <msg>' to send your first secure message to the NGS global system.")
     print()
 
 def mkdir(d):
@@ -131,6 +139,16 @@ def mkdir(d):
         print("mkdir", d)
         os.mkdir(d)
 
+def ngs_add_env():
+    home = os.path.expanduser("~")
+    ngs_home = os.path.join(home, ".ngs")
+    env = os.path.join(ngs_home, "env")
+    bin_dir = os.path.join('$HOME', '.ngs','bin')
+    env_cmd = 'export PATH=' + bin_dir + ':$PATH'
+    with open(env, 'w+') as env_file:
+        env_file.write(env_cmd + '\n')
+    os.chmod(env, 0o744)
+    os.environ['PATH'] = bin_dir + ':$PATH'
 
 def ngs_bin_dir():
     home = os.path.expanduser("~")
