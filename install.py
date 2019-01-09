@@ -92,13 +92,15 @@ def download_with_progress(url):
 
 
 def main():
-    bin_dir = ngs_bin_dir()
-    exe_fn = os.path.join(bin_dir, "ngs")
-
     print()
     print("Installing NGS tools for platform: " + sys.platform)
 
     url = release_url(sys.platform, sys.argv[1] if len(sys.argv) > 1 else None)
+    bin_dir = ngs_bin_dir()
+    exe_fn = os.path.join(bin_dir, "ngs")
+    if "windows" in url:
+        exe_fn = os.path.join(bin_dir, "ngs.exe")
+
     compressed = download_with_progress(url)
 
     if url.endswith(".zip"):
