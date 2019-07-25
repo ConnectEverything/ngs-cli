@@ -31,10 +31,10 @@ try:
 except ImportError:
     from urllib2 import urlopen
 
-REPO_URL = "https://github.com/connecteverything/ngs-cli"
-LATEST_RELEASE_URL = REPO_URL + "/releases/latest"
-TAG_URL = REPO_URL + "/releases/tag/"
-FILENAME_LOOKUP = {
+NGS_REPO_URL = "https://github.com/connecteverything/ngs-cli"
+NGS_LATEST_RELEASE_URL = NGS_REPO_URL + "/releases/latest"
+NGS_TAG_URL = NGS_REPO_URL + "/releases/tag/"
+NGS_FILENAME_LOOKUP = {
     "darwin": "ngs-darwin-amd64.zip",
     "linux": "ngs-linux-amd64.zip",
     "linux2": "ngs-linux-amd64.zip",
@@ -42,14 +42,23 @@ FILENAME_LOOKUP = {
 }
 
 
-def release_url(platform, tag):
+NSC_REPO_URL = "https://github.com/nats-io/nsc"
+NSC_LATEST_RELEASE_URL = NSC_REPO_URL + "/releases/latest"
+NSC_TAG_URL = NSC_REPO_URL + "/releases/tag/"
+NSC_FILENAME_LOOKUP = {
+    "darwin": "nsc-darwin-amd64.zip",
+    "linux": "nsc-linux-amd64.zip",
+    "win32": "nsc-windows-amd64.zip"
+}
+
+def ngs_release_url(platform, tag):
     try:
-        filename = FILENAME_LOOKUP[platform]
+        filename = NGS_FILENAME_LOOKUP[platform]
     except KeyError:
         print("Unable to locate appropriate filename for", platform)
         sys.exit(1)
 
-    url = TAG_URL + tag if tag else LATEST_RELEASE_URL
+    url = NGS_TAG_URL + tag if tag else NGS_LATEST_RELEASE_URL
 
     try:
         html = urlopen(url).read().decode('utf-8')
@@ -66,9 +75,32 @@ def release_url(platform, tag):
 
     return "https://github.com" + matching[0]
 
+def nsc_release_url(platform, tag):
+    try:
+        filename = NSC_FILENAME_LOOKUP[platform]
+    except KeyError:
+        print("Unable to locate appropriate filename for", platform)
+        sys.exit(1)
 
-def download_with_progress(url):
-    print("Downloading NGS installer: ", url)
+    url = NSC_TAG_URL + tag if tag else NSC_LATEST_RELEASE_URL
+
+    try:
+        html = urlopen(url).read().decode('utf-8')
+    except:
+        print("Unable to find release page for", tag)
+        sys.exit(1)
+
+    urls = re.findall(r'href=[\'"]?([^\'" >]+)', html)
+    matching = [u for u in urls if filename in u]
+
+    if len(matching) != 1:
+        print("Unable to find download url for", filename)
+        sys.exit(1)
+
+    return "https://github.com" + matching[0]
+
+def download_with_progress(msg, url):
+    print(msg, url)
 
     remote_file = urlopen(url)
     total_size = int(remote_file.headers['Content-Length'].strip())
@@ -90,22 +122,43 @@ def download_with_progress(url):
 
     return b''.join(data)
 
+def mkdir(d):
+    if not os.path.exists(d):
+        os.mkdir(d)
+
+def add_env(bin_dir):
+    home = os.path.expanduser("~")
+    ngs_home = os.path.join(home, ".nsc")
+    env = os.path.join(ngs_home, "env")
+    env_cmd = 'export PATH=' + bin_dir + ':$PATH  #Add NGS utility to the path'
+    with open(env, 'w+') as env_file:
+        env_file.write(env_cmd + '\n')
+    os.chmod(env, 0o744)
+
+def make_bin_dir():
+    home = os.path.expanduser("~")
+    toolhome = os.path.join(home, ".nsc")
+    mkdir(toolhome)
+    bin_dir = os.path.join(toolhome, "bin")
+    mkdir(bin_dir)
+    return bin_dir
 
 def main():
     print()
     print("Installing NGS tools for platform: " + sys.platform)
 
-    url = release_url(sys.platform, sys.argv[1] if len(sys.argv) > 1 else None)
-    bin_dir = ngs_bin_dir()
-    exe_fn = os.path.join(bin_dir, "ngs")
-    if "windows" in url:
-        exe_fn = os.path.join(bin_dir, "ngs.exe")
+    url = ngs_release_url(sys.platform, sys.argv[1] if len(sys.argv) > 1 else None)
+    bin_dir = make_bin_dir()
 
-    compressed = download_with_progress(url)
+    ngs_exe_path = os.path.join(bin_dir, "ngs")
+    if "windows" in url:
+        ngs_exe_path = os.path.join(bin_dir, "ngs.exe")
+
+    compressed = download_with_progress("Downloading NGS installer: ", url)
 
     if url.endswith(".zip"):
         with zipfile.ZipFile(io.BytesIO(compressed), 'r') as z:
-            with open(exe_fn, 'wb+') as exe:
+            with open(ngs_exe_path, 'wb+') as exe:
                 if "windows" not in url:
                     exe.write(z.read('ngs'))
                 else:
@@ -113,20 +166,43 @@ def main():
     else:
         # Note: gzip.decompress is not available in python2.
         content = zlib.decompress(compressed, 15 + 32)
-        with open(exe_fn, 'wb+') as exe:
+        with open(ngs_exe_path, 'wb+') as exe:
             exe.write(content)
-    os.chmod(exe_fn, 0o744)
+    os.chmod(ngs_exe_path, 0o744)
+
+    nsc_exe_path = os.path.join(bin_dir, "nsc")
+    if "windows" in url:
+        nsc_exe_path = os.path.join(bin_dir, "nsc.exe")
+
+    url = nsc_release_url(sys.platform, sys.argv[1] if len(sys.argv) > 1 else None)
+    compressed = download_with_progress("Downloading NSC installer: ", url)
+
+    if url.endswith(".zip"):
+        with zipfile.ZipFile(io.BytesIO(compressed), 'r') as z:
+            with open(nsc_exe_path, 'wb+') as exe:
+                if "windows" not in url:
+                    exe.write(z.read('nsc'))
+                else:
+                    exe.write(z.read('nsc.exe'))
+    else:
+        # Note: gzip.decompress is not available in python2.
+        content = zlib.decompress(compressed, 15 + 32)
+        with open(nsc_exe_path, 'wb+') as exe:
+            exe.write(content)
+    os.chmod(nsc_exe_path, 0o744)
 
     # Add the env helper.
-    ngs_add_env()
+    add_env(bin_dir)
 
-    p_exe_dir = os.path.join('$HOME','.ngs','bin','ngs')
-    env_tool = os.path.join('$HOME', '.ngs', 'env')
+    env_tool = os.path.join('$HOME', '.nsc', 'env')
 
     print()
-    print("The NGS tool has been installed: " + p_exe_dir)
+    print("The NSC and NGS tools have been installed.")
     print()
-    print("You will need to extend your $PATH. Place the ")
+    print(nsc_exe_path + " is used to edit, view and deploy NATS security JWTS.")
+    print(ngs_exe_path + " can be used to signup for the Synadia global service and manage your billing plan.")
+    print()
+    print("To add these commands to your Unix $PATH, place the ")
     print("contents of "+ env_tool + " in your shell setup of choice.")
     print("e.g. 'cat " + env_tool + " >> " + os.path.join('$HOME', '.bashrc') + "'")
     print()
@@ -134,30 +210,7 @@ def main():
     print("If successful, 'ngs -h' will show the help options.")
     print()
     print("Signup for a  free account using 'ngs signup --free'.")
-    print("When complete, use 'ngs demo echo <msg>' to send your first secure message to the NGS global system.")
     print()
-
-def mkdir(d):
-    if not os.path.exists(d):
-        os.mkdir(d)
-
-def ngs_add_env():
-    home = os.path.expanduser("~")
-    ngs_home = os.path.join(home, ".ngs")
-    env = os.path.join(ngs_home, "env")
-    bin_dir = os.path.join('$HOME', '.ngs','bin')
-    env_cmd = 'export PATH=' + bin_dir + ':$PATH  #Add NGS utility to the path'
-    with open(env, 'w+') as env_file:
-        env_file.write(env_cmd + '\n')
-    os.chmod(env, 0o744)
-
-def ngs_bin_dir():
-    home = os.path.expanduser("~")
-    toolhome = os.path.join(home, ".ngs")
-    mkdir(toolhome)
-    bin_dir = os.path.join(toolhome, "bin")
-    mkdir(bin_dir)
-    return bin_dir
 
 
 if __name__ == '__main__':
