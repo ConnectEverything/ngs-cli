@@ -144,10 +144,16 @@ def make_bin_dir():
     return bin_dir
 
 def main():
-    print()
-    print("Installing NGS tools for platform: " + sys.platform)
 
-    url = ngs_release_url(sys.platform, sys.argv[1] if len(sys.argv) > 1 else None)
+    platform = sys.platform
+    if "linux" in platform:
+            # convert any linux regardless of version reported to "linux"
+            platform = "linux"
+    
+    print()
+    print("Installing NGS tools for platform: " + platform)
+
+    url = ngs_release_url(platform, sys.argv[1] if len(sys.argv) > 1 else None)
     bin_dir = make_bin_dir()
 
     ngs_exe_path = os.path.join(bin_dir, "ngs")
@@ -174,7 +180,7 @@ def main():
     if "windows" in url:
         nsc_exe_path = os.path.join(bin_dir, "nsc.exe")
 
-    url = nsc_release_url(sys.platform, sys.argv[1] if len(sys.argv) > 1 else None)
+    url = nsc_release_url(platform, sys.argv[1] if len(sys.argv) > 1 else None)
     compressed = download_with_progress("Downloading NSC installer: ", url)
 
     if url.endswith(".zip"):
@@ -202,14 +208,22 @@ def main():
     print(nsc_exe_path + " is used to edit, view and deploy NATS security JWTS.")
     print(ngs_exe_path + " can be used to signup for the Synadia global service and manage your billing plan.")
     print()
-    print("To add these commands to your Unix $PATH, place the ")
-    print("contents of "+ env_tool + " in your shell setup of choice.")
-    print("e.g. 'cat " + env_tool + " >> " + os.path.join('$HOME', '.bashrc') + "'")
+    print("To add these commands to your $PATH")
     print()
-    print("To get started, try 'source " + env_tool + "'")
-    print("If successful, 'ngs -h' will show the help options.")
+    print("Bash:")
+    print("  echo 'export PATH=\"$PATH:%s\"' >> $HOME/.bash_profile" % bin_dir)
+    print("  source $HOME/.bash_profile")
     print()
-    print("Signup for a  free account using 'ngs signup --free'.")
+    print("zsh:")
+    print("  echo 'export PATH=\"$PATH:%s\"' >> $HOME/.zshrc" % bin_dir)
+    print("  source $HOME/.zshrc")
+    print()
+    print("windows:")
+    print("  setx path %%path;\"%s\"" % bin_dir)
+    print()
+    print("If successful, 'ngs -h' and 'nsc -h' will show the help options.")
+    print()
+    print("Signup for a free account by creating a folder, cd-ing into it and using 'nsc init -r synadia'.")
     print()
 
 
