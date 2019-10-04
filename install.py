@@ -223,7 +223,7 @@ def main():
     print()
     print("If successful, 'ngs -h' and 'nsc -h' will show the help options.")
     print()
-    print("Signup for a free account by creating a folder, cd-ing into it and using 'nsc init -r synadia'.")
+    print("Learn more about signing up at synadia.com.")
     print()
 
 
