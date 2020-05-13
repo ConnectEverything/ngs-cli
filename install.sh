@@ -63,6 +63,12 @@ readonly NSC_BINARY_BASENAME='nsc'
 readonly PURPOSE_NSC='is used to edit, view and deploy NATS security JWTS.'
 readonly PURPOSE_NGS='can be used to signup for the Synadia global service and manage your billing plan.'
 
+if [ -n "${ZSH_VERSION:-}" ]; then
+  # We mostly just need to unset LOCAL_TRAPS but we might as well
+  # emulate sh more fully.
+  emulate sh
+fi
+
 progname="$(basename "$0" .sh)"
 note() { printf >&2 '%s: %s\n' "$progname" "$*"; }
 die() { note "$@"; exit 1; }
