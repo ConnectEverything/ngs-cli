@@ -77,7 +77,7 @@ usage() {
   local ev="${1:-1}"
   [ "$ev" = 0 ] || exec >&2
   cat <<EOUSAGE
-Usage: $progname [-t <tag>] [-d <dir>] [-s <dir>]
+Usage: $progname [-N <tag>] [-G <tag>] [-d <dir>] [-s <dir>]
  -d dir     directory to download into [default: ~/$RELATIVE_BIN_DIR]
  -s dir     directory in which to place a symlink to the binary
             [default: ~/bin] [use '-' to forcibly not place a symlink]
