@@ -58,6 +58,7 @@ readonly RELATIVE_BIN_DIR='.nsc/bin'
 # Binary name we are looking for (might have .exe extension on some platforms)
 readonly NGS_BINARY_BASENAME='ngs'
 readonly NSC_BINARY_BASENAME='nsc'
+readonly NSC_PROD_COMPAT_RELEASE='0.5.0'
 
 # Explanations for commands
 readonly PURPOSE_NSC='is used to edit, view and deploy NATS security JWTS.'
@@ -109,7 +110,7 @@ main() {
     "$NGS_BINARY_BASENAME" "$PURPOSE_NGS"
 }
 
-opt_tag_nsc=''
+opt_tag_nsc="$NSC_PROD_COMPAT_RELEASE"
 opt_tag_ngs=''
 opt_install_dir=''
 opt_symlink_dir=''

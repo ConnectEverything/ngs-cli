@@ -43,7 +43,8 @@ NGS_FILENAME_LOOKUP = {
 
 
 NSC_REPO_URL = "https://github.com/nats-io/nsc"
-NSC_LATEST_RELEASE_URL = NSC_REPO_URL + "/releases/latest"
+# NSC_LATEST_RELEASE_URL = NSC_REPO_URL + "/releases/latest"
+NSC_PROD_RELEASE_URL = NSC_REPO_URL + "/releases/tag/0.5.0"
 NSC_TAG_URL = NSC_REPO_URL + "/releases/tag/"
 NSC_FILENAME_LOOKUP = {
     "darwin": "nsc-darwin-amd64.zip",
@@ -82,7 +83,7 @@ def nsc_release_url(platform, tag):
         print("Unable to locate appropriate filename for", platform)
         sys.exit(1)
 
-    url = NSC_TAG_URL + tag if tag else NSC_LATEST_RELEASE_URL
+    url = NSC_TAG_URL + tag if tag else NSC_PROD_RELEASE_URL
 
     try:
         html = urlopen(url).read().decode('utf-8')
@@ -149,7 +150,7 @@ def main():
     if "linux" in platform:
             # convert any linux regardless of version reported to "linux"
             platform = "linux"
-    
+
     print()
     print("Installing NGS tools for platform: " + platform)
 
