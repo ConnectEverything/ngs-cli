@@ -4,7 +4,7 @@ Version 0.20 brings compatibility with JWT v2 functionality added to the NATS ec
 
 NGS is fully compatible with JWT v1 or v2 projects. However, the tooling that is used to manage your account (`ngs` cli) and your configurations (`nsc`) determines the version `ngs` cli that you can use, so you should update now, simply to have it at the current version.
 
-However, by default the `ngs` cli installer will default to `nsc` at it's latest version. If you are starting a new project, stop reading as the tooling will be fully compatible.
+However, by default the `ngs` cli installer will default to `nsc` at its latest version. If you are starting a new project, stop reading as the tooling will be fully compatible.
 
 If you are using `nsc` 0.5.0, you'll want to ensure that the installer didn't install a newer version of `nsc`. You can easily downgrade by executing the command: `nsc update --version 0.5.0`.
 
