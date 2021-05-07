@@ -1,4 +1,4 @@
-# JWT v2 Compatibility
+# NGS CLI v 0.20.0
 
 Version 0.20 brings compatibility with JWT v2 functionality added to the NATS ecosystem. Future updates to NGS will introduce features like JetStream which will require version 2 if not deployed as a leaf node.
 
@@ -9,6 +9,8 @@ However, by default the `ngs` cli installer will default to `nsc` at it's latest
 If you are using `nsc` 0.5.0, you'll want to ensure that the installer didn't install a newer version of `nsc`. You can easily downgrade by executing the command: `nsc update --version 0.5.0`.
 
 If you are using `nsc` 2.x but tried `ngs` in the past, you'll want to ensure you update your `ngs` tool to its current version.
+
+Finally, note that if you have on-prem servers, only `nats-server` 2.2.0 or better support v2. If you are running older servers, don't upgrade your configurations, and stay on nsc 0.5.0.
 
 
 
@@ -25,7 +27,8 @@ The following matrix describes compatibility between `nsc`, `ngs cli`:
 If you see an error like `Error: error reading root: unexpected "ed25519-nkey" algorithm` coming from `nsc` or `ngs` cli, you have a mismatch. The JWTs you are trying to read are version 2. 
 
 
-# Upgrading Your Store to use V2 and nsc 2.x
+
+# Upgrading your project to use v2 and nsc 2.x
 
 First back up your store and keys, run `nsc env` and note where the `Stores Dir` and `$NKEYS_PATH` are looking for data. 
 
