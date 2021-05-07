@@ -110,7 +110,7 @@ main() {
     "$NGS_BINARY_BASENAME" "$PURPOSE_NGS"
 }
 
-opt_tag_nsc="$NSC_PROD_COMPAT_RELEASE"
+opt_tag_nsc=''
 opt_tag_ngs=''
 opt_install_dir=''
 opt_symlink_dir=''
