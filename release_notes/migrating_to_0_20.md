@@ -30,7 +30,28 @@ If you see an error like `Error: error reading root: unexpected "ed25519-nkey" a
 
 # Upgrading your project to use v2 and nsc 2.x
 
-First back up your store and keys, run `nsc env` and note where the `Stores Dir` and `$NKEYS_PATH` are looking for data. 
+First back up your store and keys, run `nsc env` and note where the `Stores Dir` and `$NKEYS_PATH` are looking for data, if your 
+`Stores Dir` is at its default location `~/.nsc/nats` and your nkeys are at `~/.nkeys`, you can easily back them up like this:
+
+```bash
+synadia@malaga ~> cd /tmp
+synadia@malaga /tmp> mkdir backup
+synadia@malaga /tmp> cp -Rf ~/.nkeys backup/nkeys
+synadia@malaga /tmp> cp -Rf ~/.nsc/nats backup/stores
+synadia@malaga /tmp> zip -r backup.zip backup
+  adding: backup/ (stored 0%)
+  adding: backup/ (stored 0%)
+  adding: backup/stores/ (stored 0%)
+  ...
+  adding: backup/nkeys/creds/OOO/A/ (stored 0%)
+  adding: backup/nkeys/creds/OOO/A/Y.creds (deflated 36%)
+synadia@malaga /tmp> rm -Rf backup
+
+# move the backup.zip anywhere safe
+synadia@malaga /tmp> cp backup.zip ~/Documents/backups
+synadia@malaga /tmp> rm backup.zip
+```
+
 
 Next make sure you are using the latest version of `nsc` by executing: `nsc update`
 
