@@ -30,8 +30,34 @@ If you see an error like `Error: error reading root: unexpected "ed25519-nkey" a
 
 # Upgrading your project to use v2 and nsc 2.x
 
-First back up your store and keys, run `nsc env` and note where the `Stores Dir` and `$NKEYS_PATH` are looking for data, if your 
-`Stores Dir` is at its default location `~/.nsc/nats` and your nkeys are at `~/.nkeys`, you can easily back them up like this:
+First back up your store and keys, run `nsc env` and note where the `Stores Dir` and `$NKEYS_PATH`:
+
+
+```bash
+synadia@malaga ~/D/c/s/g/C/ngs-cli (ngs-cli-doc)> nsc env
++------------------------------------------------------------------------------------------------------+
+|                                           NSC Environment                                            |
++--------------------+-----+---------------------------------------------------------------------------+
+| Setting            | Set | Effective Value                                                           |
++--------------------+-----+---------------------------------------------------------------------------+
+| $NSC_CWD_ONLY      | No  | If set, default operator/account from cwd only                            |
+| $NSC_NO_GIT_IGNORE | No  | If set, no .gitignore files written                                       |
+| $NKEYS_PATH        | No  | ~/.nkeys                                                                  |
+| $NSC_HOME          | No  | ~/.nsc                                                                    |
+| Config             |     | ~/.nsc/nsc.json                                                           |
+| $NATS_CA           | No  | If set, root CAs in the referenced file will be used for nats connections |
+|                    |     | If not set, will default to the system trust store                        |
++--------------------+-----+---------------------------------------------------------------------------+
+| From CWD           |     | No                                                                        |
+| Stores Dir         |     | ~/.nsc/nats                                                               |
+| Default Operator   |     | synadia                                                                   |
+| Default Account    |     | A                                                                         |
+| Root CAs to trust  |     | Default: System Trust Store                                               |
++--------------------+-----+---------------------------------------------------------------------------+
+```
+
+In the above case you need to backup:
+`~/.nkeys` and `~/.nsc/nats`:
 
 ```bash
 synadia@malaga ~> cd /tmp
