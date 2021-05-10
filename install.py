@@ -43,8 +43,8 @@ NGS_FILENAME_LOOKUP = {
 
 
 NSC_REPO_URL = "https://github.com/nats-io/nsc"
-# NSC_LATEST_RELEASE_URL = NSC_REPO_URL + "/releases/latest"
-NSC_PROD_RELEASE_URL = NSC_REPO_URL + "/releases/tag/0.5.0"
+NSC_LATEST_RELEASE_URL = NSC_REPO_URL + "/releases/latest"
+# NSC_PROD_RELEASE_URL = NSC_REPO_URL + "/releases/tag/0.5.0"
 NSC_TAG_URL = NSC_REPO_URL + "/releases/tag/"
 NSC_FILENAME_LOOKUP = {
     "darwin": "nsc-darwin-amd64.zip",
