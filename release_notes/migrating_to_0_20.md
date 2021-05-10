@@ -1,16 +1,16 @@
 # NGS CLI v 0.20.0
 
-Version 0.20 brings compatibility with JWT v2 functionality added to the NATS ecosystem. Future updates to NGS will introduce features like JetStream which will require version 2 if not deployed as a leaf node.
+Version 0.20 brings compatibility with JWT v2 functionality added to the NATS ecosystem. Future updates to NGS will introduce features like JetStream which will require JWT version 2 if not deployed as a leaf node.
 
 NGS is fully compatible with JWT v1 or v2 projects. However, the tooling that is used to manage your account (`ngs` cli) and your configurations (`nsc`) determines the version `ngs` cli that you can use, so you should update now, simply to have it at the current version.
 
-However, by default the `ngs` cli installer will default to `nsc` at its latest version. If you are starting a new project, stop reading as the tooling will be fully compatible.
+The `ngs` cli installer will default to nsc at its latest version, so if you are starting a new project, you won't need to review the rest of this document as the tooling will be fully compatible.
 
-If you are using `nsc` 0.5.0, you'll want to ensure that the installer didn't install a newer version of `nsc`. You can easily downgrade by executing the command: `nsc update --version 0.5.0`.
+If you are using `nsc` 0.5.0, you'll want to ensure that the installer didn't install a newer version of `nsc`. Execute `nsc --version` to verify it wasn't upgrade. You can easily downgrade by executing the command: `nsc update --version 0.5.0`.
 
-If you are using `nsc` 2.x but tried `ngs` in the past, you'll want to ensure you update your `ngs` tool to its current version.
+If you are using `nsc` 2.x but tried `ngs` in the past, you'll want to ensure you update your `ngs` tool to its current version by executing `nsc update`.
 
-Finally, note that if you have on-prem servers, only `nats-server` 2.2.0 or better support v2. If you are running older servers, don't upgrade your configurations, and stay on nsc 0.5.0.
+Finally, note that if you have on-prem servers, only `nats-server` 2.2.0 or better support JWT v2. If you are running older servers, don't upgrade your configurations, and stay on `nsc` 0.5.0.
 
 
 
