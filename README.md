@@ -22,4 +22,4 @@ Download your platform binary from [here.](https://github.com/connecteverything/
 
 ## Release Notes
 
-With 0.9 we are simplifying the NGS tool and relying heavily on the open source `nsc` tool for all JWT editing and creation. More information about migrating to this new version can be found [here](release_notes/migrating_to_0_9.md).
+The release notes for version 0.20.0 are [here](release_notes/migrating_to_0_20.md)
