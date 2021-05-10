@@ -83,7 +83,7 @@ def nsc_release_url(platform, tag):
         print("Unable to locate appropriate filename for", platform)
         sys.exit(1)
 
-    url = NSC_TAG_URL + tag if tag else NSC_PROD_RELEASE_URL
+    url = NSC_TAG_URL + tag if tag else NSC_LATEST_RELEASE_URL
 
     try:
         html = urlopen(url).read().decode('utf-8')
