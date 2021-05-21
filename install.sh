@@ -1,9 +1,10 @@
 #!/bin/sh
-# shellcheck disable=SC2039
+# shellcheck disable=SC2039,SC3043
 #   ... we use 'local' as covered below (just beneath the license)
+#   ... SC2039 became SC3043 for the case of local
 set -eu
 
-# Copyright 2020 The NATS Authors
+# Copyright 2020-2021 The NATS Authors
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -43,22 +44,20 @@ set -eu
 #  * https://github.com/connecteverything/ngs-cli/releases/download/v0.11.0/ngs-linux-amd64.zip ->
 #    <s3-bucket-url-with-auth-query-params>
 
-# Like the Python before us, we only support amd64 for now, and that's all that
-# ngs releases.  By calling this out up top, it should make it easier to find
-# the places which matter should that change in the future.
-readonly RELEASE_ARCH="amd64"
+# This is a list of the architectures we support, which should be listed in
+# the Go architecture naming format.
+readonly SUPPORTED_ARCHS="amd64 arm64"
 
 # Finding the releases to download
 readonly GITHUB_OWNER_REPO_NGS='connecteverything/ngs-cli'
 readonly GITHUB_OWNER_REPO_NSC='nats-io/nsc'
-readonly HTTP_USER_AGENT='ngs_install/0.2 (@ConnectEverything)'
+readonly HTTP_USER_AGENT='ngs_install/0.3 (@ConnectEverything)'
 
 # Where to install to, relative to home-dir; both nsc and ngs will go here
 readonly RELATIVE_BIN_DIR='.nsc/bin'
 # Binary name we are looking for (might have .exe extension on some platforms)
 readonly NGS_BINARY_BASENAME='ngs'
 readonly NSC_BINARY_BASENAME='nsc'
-readonly NSC_PROD_COMPAT_RELEASE='0.5.0'
 
 # Explanations for commands
 readonly PURPOSE_NSC='is used to edit, view and deploy NATS security JWTS.'
@@ -84,6 +83,7 @@ Usage: $progname [-N <tag>] [-G <tag>] [-d <dir>] [-s <dir>]
             [default: ~/bin] [use '-' to forcibly not place a symlink]
  -N tag     retrieve a tagged release of NSC instead of the latest
  -G tag     retrieve a tagged release of NGS instead of the latest
+ -a arch    force choosing a specific processor architecture [allowed: $SUPPORTED_ARCHS]
 EOUSAGE
   exit "$ev"
 }
@@ -114,8 +114,9 @@ opt_tag_nsc=''
 opt_tag_ngs=''
 opt_install_dir=''
 opt_symlink_dir=''
+opt_arch=''
 parse_options() {
-  while getopts ':d:hs:G:N:' arg; do
+  while getopts ':a:d:hs:G:N:' arg; do
     case "$arg" in
       (h) usage 0 ;;
 
@@ -123,6 +124,13 @@ parse_options() {
       (s) opt_symlink_dir="$OPTARG" ;;
       (N) opt_tag_nsc="$OPTARG" ;;
       (G) opt_tag_ngs="$OPTARG" ;;
+
+      (a)
+        if validate_arch "$OPTARG"; then
+          opt_arch="$OPTARG"
+        else
+          die "unsupported arch for -a, try one of: $SUPPORTED_ARCHS"
+        fi ;;
 
       (:) die "missing required option for -$OPTARG; see -h for help" ;;
       (\?) die "unknown option -$OPTARG; see -h for help" ;;
@@ -229,9 +237,45 @@ normalized_ostype() {
   printf '%s\n' "$ostype"
 }
 
+validate_arch() {
+  local check="$1"
+  local x
+  # Deliberately not quoted, setting $@ within this function
+  # shellcheck disable=SC2086
+  set $SUPPORTED_ARCHS
+  for x; do
+    if [ "$x" = "$check" ]; then
+      return 0
+    fi
+  done
+  return 1
+}
+
+normalized_arch() {
+  if [ -n "${opt_arch:-}" ]; then
+    printf '%s\n' "$opt_arch"
+    return 0
+  fi
+
+  local narch
+  narch="$(uname -p)"
+  case "$narch" in
+    (x86_64) narch="amd64" ;;
+    (amd64) true ;;
+    (aarch64) narch="arm64" ;;
+    (arm64) true ;;
+    (*) die "Unhandled architecture '$narch', use -a flag to select a supported arch" ;;
+  esac
+  if validate_arch "$narch"; then
+    printf '%s\n' "$narch"
+  else
+    die "Unhandled architecture '$narch', use -a flag to select a supported arch"
+  fi
+}
+
 zip_filename_per_os() {
   local binname="${1:?}"
-  printf '%s\n' "${binname}-$(normalized_ostype)-${RELEASE_ARCH}.zip"
+  printf '%s\n' "${binname}-$(normalized_ostype)-$(normalized_arch).zip"
 }
 
 exe_filename_per_os() {
