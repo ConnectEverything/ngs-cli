@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright 2018 Synadia Communications, Inc
+# Copyright 2018-2021 Synadia Communications, Inc
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -35,10 +35,17 @@ NGS_REPO_URL = "https://github.com/connecteverything/ngs-cli"
 NGS_LATEST_RELEASE_URL = NGS_REPO_URL + "/releases/latest"
 NGS_TAG_URL = NGS_REPO_URL + "/releases/tag/"
 NGS_FILENAME_LOOKUP = {
-    "darwin": "ngs-darwin-amd64.zip",
-    "linux": "ngs-linux-amd64.zip",
-    "linux2": "ngs-linux-amd64.zip",
-    "win32": "ngs-windows-amd64.zip"
+    "darwin": {
+        "amd64": "ngs-darwin-amd64.zip",
+        "arm64": "ngs-darwin-arm64.zip",
+    },
+    "linux": {
+        "amd64": "ngs-linux-amd64.zip",
+        "arm64": "ngs-linux-arm64.zip",
+    },
+    "win32": {
+        "amd64": "ngs-windows-amd64.zip",
+    },
 }
 
 
@@ -47,16 +54,24 @@ NSC_LATEST_RELEASE_URL = NSC_REPO_URL + "/releases/latest"
 # NSC_PROD_RELEASE_URL = NSC_REPO_URL + "/releases/tag/0.5.0"
 NSC_TAG_URL = NSC_REPO_URL + "/releases/tag/"
 NSC_FILENAME_LOOKUP = {
-    "darwin": "nsc-darwin-amd64.zip",
-    "linux": "nsc-linux-amd64.zip",
-    "win32": "nsc-windows-amd64.zip"
+    "darwin": {
+        "amd64": "nsc-darwin-amd64.zip",
+        "arm64": "nsc-darwin-arm64.zip",
+    },
+    "linux": {
+        "amd64": "nsc-linux-amd64.zip",
+        "arm64": "nsc-linux-arm64.zip",
+    },
+    "win32": {
+        "amd64": "nsc-windows-amd64.zip",
+    },
 }
 
-def ngs_release_url(platform, tag):
+def ngs_release_url(platform, arch, tag):
     try:
-        filename = NGS_FILENAME_LOOKUP[platform]
+        filename = NGS_FILENAME_LOOKUP[platform][arch]
     except KeyError:
-        print("Unable to locate appropriate filename for", platform)
+        print("Unable to locate appropriate filename for", platform, "with archtecture", arch)
         sys.exit(1)
 
     url = NGS_TAG_URL + tag if tag else NGS_LATEST_RELEASE_URL
@@ -76,11 +91,11 @@ def ngs_release_url(platform, tag):
 
     return "https://github.com" + matching[0]
 
-def nsc_release_url(platform, tag):
+def nsc_release_url(platform, arch, tag):
     try:
-        filename = NSC_FILENAME_LOOKUP[platform]
+        filename = NSC_FILENAME_LOOKUP[platform][arch]
     except KeyError:
-        print("Unable to locate appropriate filename for", platform)
+        print("Unable to locate appropriate filename for", platform, "with archtecture", arch)
         sys.exit(1)
 
     url = NSC_TAG_URL + tag if tag else NSC_LATEST_RELEASE_URL
@@ -150,11 +165,16 @@ def main():
     if "linux" in platform:
             # convert any linux regardless of version reported to "linux"
             platform = "linux"
+    arch = os.uname()[4]
+    if arch == "x86_64":
+        arch = "amd64"
+    elif arch == "aarch64":
+        arch = "arm64"
 
     print()
-    print("Installing NGS tools for platform: " + platform)
+    print("Installing NGS tools for platform: " + platform + " with architecture: " + arch)
 
-    url = ngs_release_url(platform, sys.argv[1] if len(sys.argv) > 1 else None)
+    url = ngs_release_url(platform, arch, sys.argv[1] if len(sys.argv) > 1 else None)
     bin_dir = make_bin_dir()
 
     ngs_exe_path = os.path.join(bin_dir, "ngs")
@@ -181,7 +201,7 @@ def main():
     if "windows" in url:
         nsc_exe_path = os.path.join(bin_dir, "nsc.exe")
 
-    url = nsc_release_url(platform, sys.argv[1] if len(sys.argv) > 1 else None)
+    url = nsc_release_url(platform, arch, sys.argv[1] if len(sys.argv) > 1 else None)
     compressed = download_with_progress("Downloading NSC installer: ", url)
 
     if url.endswith(".zip"):
