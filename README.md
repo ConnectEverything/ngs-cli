@@ -1,4 +1,12 @@
-# NGS
+# Support Notice
+
+The NGS CLI is no longer supported. Please use the NGS web app at:
+
+https://app.ngs.global/
+
+---
+
+## NGS
 
 The `ngs` command line tool is used to manage your billing account on Synadia's global messaging service built with NATS. Access to the service relies on the use of Account and User JWTs. These JWTs can be configured and set up locally using the open source tool [nsc](https://github.com/nats-io/nsc). Installing `ngs` using the instructions below will also install the open source `nsc` tool.
 
